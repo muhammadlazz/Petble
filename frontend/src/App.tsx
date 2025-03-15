@@ -12,6 +12,7 @@ import Notification from "./components/Notification";
 import Mail from "./components/Mail";
 import Settings from "./components/Settings";
 import Chat from "./components/Chat";
+import Register from "./components/Register";
 
 const App: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
@@ -81,6 +82,7 @@ const App: React.FC = () => {
             <Route path="/mail" element={<Mail />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/chat/:id" element={<Chat />} />
+            <Route path="/register" element={<Register />} />
           </Routes>
         </main>
 

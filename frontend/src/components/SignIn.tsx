@@ -1,15 +1,41 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import signinImage from './signin-image.jpg'; // Sesuaikan path
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import signinImage from "./signin-image.jpg"; // Sesuaikan path
 
 const SignIn: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(""); // ✅ Bisa digunakan
+  const [loading, setLoading] = useState(false); // ✅ Bisa digunakan
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/discovery'); // Navigasi ke halaman lain
+    setError(""); 
+    setLoading(true);
+  
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Login failed");
+      }
+
+      // ✅ Simpan token ke localStorage
+      localStorage.setItem("token", data.token); 
+
+      console.log("Login Successful:", data);
+      navigate("/discovery"); // Arahkan ke halaman discovery setelah sukses login
+    } catch (err: any) {
+      setError(err.message); // ✅ Tampilkan error ke UI
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -44,13 +70,29 @@ const SignIn: React.FC = () => {
                 required
               />
             </div>
+
+            {/* Tampilkan pesan error jika ada */}
+            {error && <p className="text-red-500">{error}</p>}
+
             <button
               type="submit"
               className="px-6 py-2 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 transition w-full max-w-xs mx-auto"
+              disabled={loading} // ✅ Disable button saat loading
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
+
+          {/* Tombol navigasi ke halaman Register */}
+          <p className="mt-4 text-sm text-gray-700">
+            Don't have an account?{" "}
+            <button
+              onClick={() => navigate("/register")}
+              className="text-teal-900 font-semibold hover:underline"
+            >
+              Register here
+            </button>
+          </p>
         </div>
       </div>
     </div>
