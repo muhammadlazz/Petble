@@ -1,27 +1,29 @@
 import express from "express";
-import cors from "cors";
+import mongoose from "mongoose";
 import dotenv from "dotenv";
-import connectDB from "./config/db.js";
-import userRoutes from "./routes/userRoutes.js"; // Pastikan ada ekstensi .js
+import userRoutes from "./routes/users.js"; // Pastikan path benar
 
-// Load environment variables
 dotenv.config();
 
-// Koneksi ke MongoDB
-connectDB();
-
 const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(cors());
 app.use(express.json());
 
+// Endpoint untuk tes server
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
+
+// Gunakan router untuk users
 app.use("/api/users", userRoutes);
 
-app.get("/", (req, res) => {
-  res.send("Backend Petble berjalan!");
-});
+// Koneksi ke MongoDB
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("MongoDB Connected"))
+  .catch((error) => console.error("MongoDB Connection Error:", error));
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
