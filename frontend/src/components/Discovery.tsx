@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSearch, FiBell, FiMail, FiSettings, FiHome } from "react-icons/fi";
 import LazuardiImage from "./Lazuardi.jpg";
@@ -41,17 +41,29 @@ const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests }) => {
 
 const Discovery: React.FC = () => {
   const navigate = useNavigate();
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      const userData = JSON.parse(storedUser);
+      setUsername(userData.email.split("@")[0]); // Ambil bagian sebelum '@' sebagai username
+    }
+  }, []);
 
   const users = [
     { name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"] },
     { name: "Rivan", age: 21, image: RivanImage, interests: ["Reptile lovers", "Gecko lovers"] },
     { name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Gecko lovers"] },
-    { name: "Ellizabeth", age: 21, image: ElizabethImage, interests: ["Reptile lovers", "Gecko lovers"] },
+    { name: "Elizabeth", age: 21, image: ElizabethImage, interests: ["Reptile lovers", "Gecko lovers"] },
   ];
 
   return (
     <div className="min-h-screen bg-teal-900 px-6 py-4">
       <header className="flex justify-between items-center mb-6">
+        <div className="text-white text-2xl font-semibold">
+          Welcome, {username || "Guest"}!
+        </div>
         <div className="flex gap-4 text-white text-2xl">
           <button className="hover:text-orange-500"><FiSearch /></button>
           <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FiBell /></button>
