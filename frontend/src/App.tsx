@@ -17,7 +17,7 @@ import Register from "./components/Register";
 const App: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
   const [theme, setTheme] = useState<string>(localStorage.getItem("theme") || "light");
-  const [message, setMessage] = useState<string>("");
+  const [, setMessage] = useState<string>("");
 
   useEffect(() => {
     if (theme === "dark") {
@@ -70,7 +70,6 @@ const App: React.FC = () => {
 
         {/* MAIN CONTENT */}
         <main className="flex-1 container mx-auto p-6">
-          <p className="text-center text-lg">{message}</p>
           
           <Routes>
             <Route path="/" element={<Home />} />
