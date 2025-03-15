@@ -5,10 +5,9 @@ import signinImage from "./signin-image.jpg"; // Sesuaikan path
 const SignIn: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(""); 
-  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // ✅ Bisa digunakan
+  const [loading, setLoading] = useState(false); // ✅ Bisa digunakan
   const navigate = useNavigate();
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(""); 
@@ -26,14 +25,13 @@ const SignIn: React.FC = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ Simpan token & user ke localStorage
+      // ✅ Simpan token ke localStorage
       localStorage.setItem("token", data.token); 
-      localStorage.setItem("user", JSON.stringify(data.user));
 
       console.log("Login Successful:", data);
       navigate("/discovery"); // Arahkan ke halaman discovery setelah sukses login
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message); // ✅ Tampilkan error ke UI
     } finally {
       setLoading(false);
     }
@@ -78,7 +76,7 @@ const SignIn: React.FC = () => {
             <button
               type="submit"
               className="px-6 py-2 bg-orange-500 text-white font-semibold rounded-full hover:bg-orange-600 transition w-full max-w-xs mx-auto"
-              disabled={loading}
+              disabled={loading} // ✅ Disable button saat loading
             >
               {loading ? "Logging in..." : "Login"}
             </button>

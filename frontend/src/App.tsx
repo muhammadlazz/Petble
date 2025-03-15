@@ -70,7 +70,6 @@ const App: React.FC = () => {
 
         {/* MAIN CONTENT */}
         <main className="flex-1 container mx-auto p-6">
-          <h1 className="text-center text-2xl font-bold mb-4">Message from Backend</h1>
           <p className="text-center text-lg">{message}</p>
           
           <Routes>
