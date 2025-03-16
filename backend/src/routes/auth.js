@@ -52,4 +52,61 @@ router.post("/login", async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: Mendaftarkan user baru
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Registrasi berhasil
+ *       400:
+ *         description: Email sudah terdaftar
+ */
+router.post("/register", async (req, res) => {
+  // Logika register
+});
+
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login ke aplikasi
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login berhasil
+ *       400:
+ *         description: Email atau password salah
+ */
+router.post("/login", async (req, res) => {
+  // Logika login
+});
+
+
 export default router;
