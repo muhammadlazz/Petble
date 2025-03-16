@@ -15,6 +15,7 @@ router.get("/users", async (req, res) => {
   }
 });
 
+
 // Endpoint Register
 router.post("/register", async (req, res) => {
   try {

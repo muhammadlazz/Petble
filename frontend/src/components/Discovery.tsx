@@ -5,6 +5,7 @@ import LazuardiImage from "./Lazuardi.jpg";
 import RivanImage from "./rivan.jpg";
 import NajwaImage from "./najwa.jpg";
 import ElizabethImage from "./elizabeth.jpg";
+import axios from "axios"; // Import axios untuk API call
 
 interface UserCardProps {
   name: string;
@@ -12,9 +13,10 @@ interface UserCardProps {
   image: string;
   interests: string[];
   isPremium?: boolean; // Tambahkan properti 'isPremium'
+  onAddFriend: () => void; // Tambahkan properti onAddFriend
 }
 
-const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPremium }) => {
+const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPremium, onAddFriend }) => {
   return (
     <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4 relative">
       {/* Premium Label */}
@@ -40,7 +42,10 @@ const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPrem
           </span>
         ))}
       </div>
-      <button className="mt-3 bg-orange-500 text-white font-semibold px-4 py-2 rounded-full hover:bg-orange-600 transition">
+      <button
+        className="mt-3 bg-orange-500 text-white font-semibold px-4 py-2 rounded-full hover:bg-orange-600 transition"
+        onClick={onAddFriend}
+      >
         Add Friend
       </button>
     </div>
@@ -59,11 +64,24 @@ const Discovery: React.FC = () => {
     }
   }, []);
 
+  const handleAddFriend = async (friendId: string) => {
+    try {
+      const response = await axios.post("/api/add-friend", {
+        userId: localStorage.getItem("userId"), // Ambil userId dari localStorage
+        friendId,
+      });
+      alert(response.data.message); // Tampilkan pesan sukses
+    } catch (error) {
+      alert("Failed to add friend. Please try again.");
+      console.error(error);
+    }
+  };
+
   const users = [
-    { name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
-    { name: "Rivan", age: 21, image: RivanImage, interests: ["DogReptile lovers", "Gecko lovers"], isPremium: false },
-    { name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Dog lovers"], isPremium: false },
-    { name: "Ellizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
+    { id: "1", name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
+    { id: "2", name: "Rivan", age: 21, image: RivanImage, interests: ["Dog lovers", "Gecko lovers"], isPremium: false },
+    { id: "3", name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Dog lovers"], isPremium: false },
+    { id: "4", name: "Elizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
   ];
 
   return (
@@ -81,8 +99,12 @@ const Discovery: React.FC = () => {
         </div>
       </header>
       <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user, index) => (
-          <UserCard key={index} {...user} />
+        {users.map((user) => (
+          <UserCard 
+            key={user.id} 
+            {...user} 
+            onAddFriend={() => handleAddFriend(user.id)} 
+          />
         ))}
       </main>
     </div>
