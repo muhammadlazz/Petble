@@ -1,28 +1,34 @@
 import express from "express";
-import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Pastikan ada route GET yang valid
-router.get("/users", async (req, res) => {
+// ✅ GET: Ambil semua user (Protected route)
+router.get("/users", authMiddleware, async (req, res) => {
   try {
-    const users = await User.find(); // Ambil semua user dari database
+    const users = await User.find().select("-password"); // Exclude password
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
-
-// Endpoint Register
+// ✅ POST: Register user baru
 router.post("/register", async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "Email already exists" });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already exists" });
+    }
 
     // Hash password
     const salt = await bcrypt.genSalt(10);
@@ -37,17 +43,20 @@ router.post("/register", async (req, res) => {
   }
 });
 
+// ✅ POST: Login user
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Cek apakah user ada di database
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "User not found" });
     }
 
-    // Cek password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid credentials" });
@@ -56,10 +65,31 @@ router.post("/login", async (req, res) => {
     // Buat token JWT
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    res.json({ token, user: { id: user._id, email: user.email } });
+    res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (error) {
-    console.error("Login error:", error);
-    res.status(500).json({ message: "Server Error" });
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
+
+// ✅ PUT: Update profil user (Protected)
+router.put("/update-profile", authMiddleware, async (req, res) => {
+  try {
+    const { bio, gender, interest } = req.body;
+    const userId = req.user.id; // Dapatkan user ID dari middleware
+
+    // Cek apakah user ada
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Update data user
+    user.bio = bio;
+    user.gender = gender;
+    user.interest = interest;
+    await user.save();
+
+    res.json({ message: "Profile updated successfully", user });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
@@ -67,7 +97,7 @@ router.post("/login", async (req, res) => {
  * @swagger
  * /api/auth/register:
  *   post:
- *     summary: Mendaftarkan user baru
+ *     summary: Register a new user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -84,19 +114,16 @@ router.post("/login", async (req, res) => {
  *                 type: string
  *     responses:
  *       201:
- *         description: Registrasi berhasil
+ *         description: Registration successful
  *       400:
- *         description: Email sudah terdaftar
+ *         description: Email already exists or missing fields
  */
-router.post("/register", async (req, res) => {
-  // Logika register
-});
 
 /**
  * @swagger
  * /api/auth/login:
  *   post:
- *     summary: Login ke aplikasi
+ *     summary: Log in a user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -111,40 +138,54 @@ router.post("/register", async (req, res) => {
  *                 type: string
  *     responses:
  *       200:
- *         description: Login berhasil
+ *         description: Login successful
  *       400:
- *         description: Email atau password salah
+ *         description: Invalid credentials
  */
-router.post("/login", async (req, res) => {
-  // Logika login
 
-  /**
+/**
  * @swagger
  * /api/users:
  *   get:
- *     summary: Get all users
- *     description: Fetch a list of all registered users.
+ *     summary: Get all users (Protected)
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   email:
- *                     type: string
+ *         description: Returns a list of users (without passwords)
+ *       401:
+ *         description: Unauthorized, missing or invalid token
  */
-router.get("/users", async (req, res) => {
-  // logic API
-});
 
-});
-
-
+/**
+ * @swagger
+ * /api/users/update-profile:
+ *   put:
+ *     summary: Update user profile
+ *     tags: [Users]
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               bio:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *               interest:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: User not found
+ */
 
 export default router;

@@ -23,7 +23,7 @@ mongoose
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
 // Routes
-app.use("/api/auth", authRoutes); // ✅ Pastikan ini ada di server.js, bukan di auth.js
+app.use("/api/auth", authRoutes);
 
 // Dokumentasi Swagger (⚡ Diletakkan setelah inisialisasi `app`)
 swaggerDocs(app);
