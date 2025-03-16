@@ -13,6 +13,7 @@ import Mail from "./components/Mail";
 import Settings from "./components/Settings";
 import Chat from "./components/Chat";
 import Register from "./components/Register";
+import Premium from "./components/Premium";
 
 const App: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
@@ -59,6 +60,7 @@ const App: React.FC = () => {
               <NavLink to="/" className="hover:text-gray-300">Home</NavLink>
               <NavLink to="/about" className="hover:text-gray-300">About Us</NavLink>
               <NavLink to="/signin" className="hover:text-gray-300">Sign In</NavLink>
+              <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink> {/* Tambahkan ini */}
             </nav>
 
             {/* Toggle Mode */}
@@ -81,6 +83,7 @@ const App: React.FC = () => {
             <Route path="/settings" element={<Settings />} />
             <Route path="/chat/:id" element={<Chat />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/premium" element={<Premium />} /> {/* Rute Premium */}
           </Routes>
         </main>
 

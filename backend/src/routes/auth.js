@@ -1,5 +1,5 @@
 import express from "express";
-import User from "../models/User.js";
+import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -14,7 +14,6 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-
 
 // Endpoint Register
 router.post("/register", async (req, res) => {
@@ -63,88 +62,44 @@ router.post("/login", async (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Mendaftarkan user baru
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               username:
- *                 type: string
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       201:
- *         description: Registrasi berhasil
- *       400:
- *         description: Email sudah terdaftar
- */
-router.post("/register", async (req, res) => {
-  // Logika register
+// Endpoint untuk Add Friend
+router.post("/add-friend", async (req, res) => {
+  try {
+    const { userId, friendId } = req.body;
+
+    // Cari user yang sedang login
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Periksa apakah user adalah premium
+    if (!user.isPremium && user.friends.length >= 5) {
+      return res
+        .status(403)
+        .json({ message: "Free users can only have up to 5 friends." });
+    }
+
+    // Cari user yang ingin ditambahkan sebagai teman
+    const friend = await User.findById(friendId);
+    if (!friend) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+
+    // Cek apakah sudah berteman
+    if (user.friends.includes(friendId)) {
+      return res.status(400).json({ message: "Already friends." });
+    }
+
+    // Tambahkan friend ke list friends
+    user.friends.push(friendId);
+    await user.save();
+
+    res.status(200).json({ message: "Friend added successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error." });
+  }
 });
-
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Login ke aplikasi
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *               password:
- *                 type: string
- *     responses:
- *       200:
- *         description: Login berhasil
- *       400:
- *         description: Email atau password salah
- */
-router.post("/login", async (req, res) => {
-  // Logika login
-
-  /**
- * @swagger
- * /api/users:
- *   get:
- *     summary: Get all users
- *     description: Fetch a list of all registered users.
- *     responses:
- *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   email:
- *                     type: string
- */
-router.get("/users", async (req, res) => {
-  // logic API
-});
-
-});
-
-
 
 export default router;

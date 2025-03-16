@@ -11,11 +11,19 @@ interface UserCardProps {
   age: number;
   image: string;
   interests: string[];
+  isPremium?: boolean; // Tambahkan properti 'isPremium'
 }
 
-const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests }) => {
+const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPremium }) => {
   return (
-    <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4">
+    <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4 relative">
+      {/* Premium Label */}
+      {isPremium && (
+        <span className="absolute top-2 left-2 bg-orange-500 text-white text-sm px-3 py-1 rounded-full z-10 font-semibold">
+          Premium
+        </span>
+      )}
+
       <div className="relative w-full pb-[130%] overflow-hidden rounded-lg">
         <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute bottom-2 left-2 text-white text-xl font-semibold shadow-md">
@@ -52,10 +60,10 @@ const Discovery: React.FC = () => {
   }, []);
 
   const users = [
-    { name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"] },
-    { name: "Rivan", age: 21, image: RivanImage, interests: ["Reptile lovers", "Gecko lovers"] },
-    { name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Gecko lovers"] },
-    { name: "Elizabeth", age: 21, image: ElizabethImage, interests: ["Reptile lovers", "Gecko lovers"] },
+    { name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
+    { name: "Rivan", age: 21, image: RivanImage, interests: ["DogReptile lovers", "Gecko lovers"], isPremium: false },
+    { name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Dog lovers"], isPremium: false },
+    { name: "Ellizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
   ];
 
   return (
