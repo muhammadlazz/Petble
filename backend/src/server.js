@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/auth.js"; // ✅ Import routes dengan benar
 import swaggerDocs from "./swagger.js";
+import path from "path";
 
 
 dotenv.config();
@@ -32,7 +33,6 @@ app.get("/", (req, res) => {
   res.send("API is running...");
 });
 
-import path from "path";
 console.log("Swagger Path:", path.resolve("./routes/*.js"));
 
 

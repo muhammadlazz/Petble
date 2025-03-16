@@ -2,6 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const router = express.Router();
 
@@ -142,7 +143,47 @@ router.post("/login", async (req, res) => {
 router.get("/users", async (req, res) => {
   // logic API
 });
+/**
+ * @swagger
+ * /api/auth/{id}:
+ *   delete:
+ *     summary: Delete user by ID
+ *     description: Deletes a user from the database by their ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The user ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User successfully deleted
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
 
+    // Periksa apakah ID valid
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid User ID" });
+    }
+
+    const deletedUser = await User.findByIdAndDelete(id);
+    
+    if (!deletedUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server Error", error: error.message });
+  }
+});
 });
 
 
