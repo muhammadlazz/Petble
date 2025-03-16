@@ -24,10 +24,7 @@ const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests }) => {
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {interests.map((interest, index) => (
-          <span
-            key={index}
-            className="bg-white border-2 border-teal-900 text-black text-sm px-3 py-1 rounded-full"
-          >
+          <span key={index} className="bg-white border-2 border-teal-900 text-black text-sm px-3 py-1 rounded-full">
             {interest}
           </span>
         ))}
@@ -43,12 +40,34 @@ const Discovery: React.FC = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string | null>(null);
 
-  useEffect(() => {
+  // Function untuk update username dari localStorage
+  const updateUsername = () => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      const userData = JSON.parse(storedUser);
-      setUsername(userData.email.split("@")[0]); // Ambil bagian sebelum '@' sebagai username
+      try {
+        const userData = JSON.parse(storedUser);
+        setUsername(userData.username || userData.email.split("@")[0]);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    } else {
+      setUsername(null); // Jika tidak ada user, set username ke null
     }
+  };
+
+  useEffect(() => {
+    updateUsername(); // Panggil pertama kali saat komponen dimount
+
+    // Event listener untuk mendeteksi perubahan localStorage
+    const handleStorageChange = () => {
+      updateUsername();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
   }, []);
 
   const users = [

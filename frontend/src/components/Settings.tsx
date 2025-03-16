@@ -1,21 +1,32 @@
 import { useNavigate } from "react-router-dom";
-import { FaBell, FaEnvelope, FaCog, FaSearch } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaCog, FaSearch, FaSignOutAlt } from "react-icons/fa";
 
 const Settings = () => {
   const navigate = useNavigate();
 
+  // Function untuk logout
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    // Paksa trigger event storage agar komponen lain ter-update
+    window.dispatchEvent(new Event("storage"));
+
+    navigate("/signin");
+  };
+
   return (
     <div className={`min-h-screen p-6 transition-all`}>
       {/* Navbar Icons */}
-      <div className="flex justify-end space-x-4 text-xl">
-        <button><FaSearch className="cursor-pointer" /></button>
-        <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FaBell className="cursor-pointer" /></button>
-        <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FaEnvelope className="cursor-pointer" /></button>
-        <button><FaCog className="cursor-pointer text-yellow-500" /></button>
+      <div className="flex justify-between items-center text-xl">
+        <h1 className="text-3xl font-bold">Settings</h1>
+        <div className="flex space-x-4">
+          <button><FaSearch className="cursor-pointer" /></button>
+          <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FaBell className="cursor-pointer" /></button>
+          <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FaEnvelope className="cursor-pointer" /></button>
+          <button><FaCog className="cursor-pointer text-yellow-500" /></button>
+        </div>
       </div>
-
-      {/* Header
-      <h1 className="text-3xl font-bold mt-4">Petble</h1> */}
 
       {/* Profile Section */}
       <div className="mt-6 bg-white p-4 rounded-lg shadow-md dark:bg-gray-700">
@@ -45,14 +56,17 @@ const Settings = () => {
 
       <div className="mt-4">
         <label className="block text-lg font-semibold mb-2">Interest</label>
-        {/* <select className="w-full p-2 border rounded-md bg-white text-black dark:bg-gray-700 dark:text-white">
-          <option value="">Select Interest</option>
-          <option value="cats">Cats</option>
-          <option value="dogs">Dogs</option>
-          <option value="both">Both</option>
-        </select> */}
         <textarea className="w-full p-2 border rounded-md bg-white text-black dark:bg-gray-700 dark:text-white" placeholder="Enter your interest..."></textarea>
         <button className="ml-auto bg-yellow-500 text-black font-semibold px-4 py-2 rounded-lg">Submit</button>
+      </div>
+
+      {/* Logout Button */}
+      <div className="mt-6 flex justify-center">
+        <button 
+          onClick={handleLogout} 
+          className="flex items-center bg-red-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-red-600 transition">
+          <FaSignOutAlt className="mr-2" /> Logout
+        </button>
       </div>
     </div>
   );
