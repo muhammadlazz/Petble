@@ -21,7 +21,7 @@ const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPrem
     <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4 relative">
       {/* Premium Label */}
       {isPremium && (
-        <span className="absolute top-2 left-2 bg-orange-500 text-white text-sm px-3 py-1 rounded-full z-10 font-semibold">
+        <span className="absolute top-6 right-4 bg-orange-400 text-white text-sm px-3 py-1 rounded-full z-10 font-semibold">
           Premium
         </span>
       )}
@@ -81,7 +81,7 @@ const Discovery: React.FC = () => {
     { id: "1", name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
     { id: "2", name: "Rivan", age: 21, image: RivanImage, interests: ["Dog lovers", "Gecko lovers"], isPremium: false },
     { id: "3", name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Dog lovers"], isPremium: false },
-    { id: "4", name: "Elizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
+    { id: "4", name: "Ellizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
   ];
 
   return (
