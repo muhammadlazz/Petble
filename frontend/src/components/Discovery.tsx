@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSearch, FiBell, FiMail, FiSettings, FiHome } from "react-icons/fi";
+import { FaRobot } from "react-icons/fa";
 import LazuardiImage from "./Lazuardi.jpg";
 import RivanImage from "./rivan.jpg";
 import NajwaImage from "./najwa.jpg";
@@ -84,6 +85,7 @@ const Discovery: React.FC = () => {
           Welcome, {username || "Guest"}!
         </div>
         <div className="flex gap-4 text-white text-2xl">
+          <button onClick={() => navigate("/ChatBot")} className="hover:text-orange-500"><FaRobot /></button>
           <button className="hover:text-orange-500"><FiSearch /></button>
           <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FiBell /></button>
           <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FiMail /></button>
