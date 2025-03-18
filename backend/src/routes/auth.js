@@ -1,4 +1,5 @@
 import express from "express";
+import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
@@ -92,6 +93,7 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+
 
 /**
  * @swagger
@@ -187,5 +189,45 @@ router.put("/update-profile", authMiddleware, async (req, res) => {
  *       404:
  *         description: User not found
  */
+
+// Endpoint untuk Add Friend
+router.post("/add-friend", async (req, res) => {
+  try {
+    const { userId, friendId } = req.body;
+
+    // Cari user yang sedang login
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Periksa apakah user adalah premium
+    if (!user.isPremium && user.friends.length >= 5) {
+      return res
+        .status(403)
+        .json({ message: "Free users can only have up to 5 friends." });
+    }
+
+    // Cari user yang ingin ditambahkan sebagai teman
+    const friend = await User.findById(friendId);
+    if (!friend) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+
+    // Cek apakah sudah berteman
+    if (user.friends.includes(friendId)) {
+      return res.status(400).json({ message: "Already friends." });
+    }
+
+    // Tambahkan friend ke list friends
+    user.friends.push(friendId);
+    await user.save();
+
+    res.status(200).json({ message: "Friend added successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
 
 export default router;

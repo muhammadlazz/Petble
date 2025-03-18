@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBell, FaEnvelope, FaCog, FaSearch, FaSignOutAlt, FaUser } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaCog, FaSearch, FaHome, FaSignOutAlt } from "react-icons/fa";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -78,6 +79,7 @@ const Settings = () => {
   };
 
   return (
+
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Navbar */}
       <div className="flex justify-between items-center text-xl bg-white p-4 rounded-lg shadow-md">
@@ -87,6 +89,17 @@ const Settings = () => {
           <button onClick={() => navigate("/notifications")} className="hover:text-orange-500 transition"><FaBell /></button>
           <button onClick={() => navigate("/mail")} className="hover:text-orange-500 transition"><FaEnvelope /></button>
           <button className="text-yellow-500"><FaCog /></button>
+
+    <div className={`min-h-screen p-6 transition-all`}>
+      {/* Navbar Icons */}
+      <div className="flex justify-between items-center text-xl">
+        <h1 className="text-3xl font-bold">Settings</h1>
+        <div className="flex space-x-4">
+          <button><FaSearch className="cursor-pointer" /></button>
+          <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FaBell className="cursor-pointer" /></button>
+          <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FaEnvelope className="cursor-pointer" /></button>
+          <button className="text-xl p-2 hover:text-orange-500" onClick={() => navigate("/discovery")} aria-label="Home"><FaHome /></button>
+          <button><FaCog className="cursor-pointer text-yellow-500" /></button>
         </div>
       </div>
 

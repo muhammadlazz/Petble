@@ -18,7 +18,7 @@ const notifications: Notification[] = [
   { id: 1, name: "Jua", avatar: JuaImage, date: "Today" },
   { id: 2, name: "Lazuardi", avatar: LazuardiImage, date: "Today" },
   { id: 3, name: "Rivan", avatar: RivanImage, date: "Yesterday" },
-  { id: 4, name: "Elizabeth", avatar: ElizabethImage, date: "Yesterday" },
+  { id: 4, name: "Ellizabeth", avatar: ElizabethImage, date: "Yesterday" },
   { id: 5, name: "Najwa", avatar: NajwaImage, date: "Yesterday" },
 ];
 
