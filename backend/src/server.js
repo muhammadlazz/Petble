@@ -51,10 +51,15 @@ io.on("connection", (socket) => {
   socket.on("chatMessage", (message) => {
     console.log(`📩 Pesan diterima dari ${socket.id}:`, message); // Debug
 
+
     let reply = "Saya tidak mengerti. Silakan hubungi CS 085xxxxx";
     const foundResponse = responses.find(item =>
       item.keywords.some(keyword => message.toLowerCase().includes(keyword))
     );
+
+// Routes
+app.use("/api/auth", authRoutes);
+
 
     if (foundResponse) {
       reply = foundResponse.reply;

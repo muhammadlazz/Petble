@@ -62,6 +62,7 @@ const App: React.FC = () => {
               <NavLink to="/about" className="hover:text-gray-300">About Us</NavLink>
               <NavLink to="/signin" className="hover:text-gray-300">Sign In</NavLink>
               <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink>
+              <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink> {/* Tambahkan ini */}
             </nav>
 
             {/* Toggle Mode */}
@@ -85,6 +86,7 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/chatbot" element={<ChatBot />} />
             <Route path="/premium" element={<Premium />} />
+            <Route path="/premium" element={<Premium />} /> {/* Rute Premium */}
           </Routes>
         </main>
 
