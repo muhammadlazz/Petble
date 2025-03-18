@@ -14,6 +14,7 @@ import Settings from "./components/Settings";
 import Chat from "./components/Chat";
 import Register from "./components/Register";
 import ChatBot from "./components/chatbot";
+import Premium from "./components/Premium";
 
 const App: React.FC = () => {
   const [activeMenu, setActiveMenu] = useState<boolean>(false);
@@ -60,6 +61,7 @@ const App: React.FC = () => {
               <NavLink to="/" className="hover:text-gray-300">Home</NavLink>
               <NavLink to="/about" className="hover:text-gray-300">About Us</NavLink>
               <NavLink to="/signin" className="hover:text-gray-300">Sign In</NavLink>
+              <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink>
             </nav>
 
             {/* Toggle Mode */}
@@ -71,7 +73,6 @@ const App: React.FC = () => {
 
         {/* MAIN CONTENT */}
         <main className="flex-1 container mx-auto p-6">
-          
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<AboutUs />} />
@@ -82,7 +83,8 @@ const App: React.FC = () => {
             <Route path="/settings" element={<Settings />} />
             <Route path="/chat/:id" element={<Chat />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/ChatBot" element={<ChatBot />} />
+            <Route path="/chatbot" element={<ChatBot />} />
+            <Route path="/premium" element={<Premium />} />
           </Routes>
         </main>
 

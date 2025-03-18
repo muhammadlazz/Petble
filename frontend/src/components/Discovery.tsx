@@ -6,17 +6,27 @@ import LazuardiImage from "./Lazuardi.jpg";
 import RivanImage from "./rivan.jpg";
 import NajwaImage from "./najwa.jpg";
 import ElizabethImage from "./elizabeth.jpg";
+import axios from "axios"; // Import axios untuk API call
 
 interface UserCardProps {
   name: string;
   age: number;
   image: string;
   interests: string[];
+  isPremium?: boolean; // Tambahkan properti 'isPremium'
+  onAddFriend: () => void; // Tambahkan properti onAddFriend
 }
 
-const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests }) => {
+const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests, isPremium, onAddFriend }) => {
   return (
-    <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4">
+    <div className="bg-gray-200 rounded-2xl shadow-lg overflow-hidden flex flex-col p-4 relative">
+      {/* Premium Label */}
+      {isPremium && (
+        <span className="absolute top-6 right-4 bg-orange-400 text-white text-sm px-3 py-1 rounded-full z-10 font-semibold">
+          Premium
+        </span>
+      )}
+
       <div className="relative w-full pb-[130%] overflow-hidden rounded-lg">
         <img src={image} alt={name} className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute bottom-2 left-2 text-white text-xl font-semibold shadow-md">
@@ -30,7 +40,10 @@ const UserCard: React.FC<UserCardProps> = ({ name, age, image, interests }) => {
           </span>
         ))}
       </div>
-      <button className="mt-3 bg-orange-500 text-white font-semibold px-4 py-2 rounded-full hover:bg-orange-600 transition">
+      <button
+        className="mt-3 bg-orange-500 text-white font-semibold px-4 py-2 rounded-full hover:bg-orange-600 transition"
+        onClick={onAddFriend}
+      >
         Add Friend
       </button>
     </div>
@@ -71,11 +84,24 @@ const Discovery: React.FC = () => {
     };
   }, []);
 
+  const handleAddFriend = async (friendId: string) => {
+    try {
+      const response = await axios.post("/api/add-friend", {
+        userId: localStorage.getItem("userId"), // Ambil userId dari localStorage
+        friendId,
+      });
+      alert(response.data.message); // Tampilkan pesan sukses
+    } catch (error) {
+      alert("Failed to add friend. Please try again.");
+      console.error(error);
+    }
+  };
+
   const users = [
-    { name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"] },
-    { name: "Rivan", age: 21, image: RivanImage, interests: ["Reptile lovers", "Gecko lovers"] },
-    { name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Gecko lovers"] },
-    { name: "Elizabeth", age: 21, image: ElizabethImage, interests: ["Reptile lovers", "Gecko lovers"] },
+    { id: "1", name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
+    { id: "2", name: "Rivan", age: 21, image: RivanImage, interests: ["Dog lovers", "Gecko lovers"], isPremium: false },
+    { id: "3", name: "Najwa", age: 21, image: NajwaImage, interests: ["Reptile lovers", "Dog lovers"], isPremium: false },
+    { id: "4", name: "Ellizabeth", age: 21, image: ElizabethImage, interests: ["Cat lovers", "Gecko lovers"], isPremium: true },
   ];
 
   return (
@@ -94,8 +120,12 @@ const Discovery: React.FC = () => {
         </div>
       </header>
       <main className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {users.map((user, index) => (
-          <UserCard key={index} {...user} />
+        {users.map((user) => (
+          <UserCard 
+            key={user.id} 
+            {...user} 
+            onAddFriend={() => handleAddFriend(user.id)} 
+          />
         ))}
       </main>
     </div>
