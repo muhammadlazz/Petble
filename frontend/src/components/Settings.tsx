@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaBell, FaEnvelope, FaCog, FaSearch, FaSignOutAlt, FaUser } from "react-icons/fa";
-import { FaBell, FaEnvelope, FaCog, FaSearch, FaHome, FaSignOutAlt } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaCog, FaSearch, FaSignOutAlt, FaUser, FaHome } from "react-icons/fa";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -42,22 +41,20 @@ const Settings = () => {
         body: JSON.stringify({ bio, gender, interest }),
       });
   
-      // Cek apakah response sukses (status 200-299)
       if (!response.ok) {
-        const errorText = await response.text(); // Ambil teks error
+        const errorText = await response.text();
         throw new Error(errorText || "Failed to update profile");
       }
   
-      // Cek apakah response memiliki body JSON yang valid
       const contentType = response.headers.get("content-type");
       if (contentType && contentType.includes("application/json")) {
+        await response.json(); // Process the JSON response if needed
       } else {
-        throw new Error("Invalid JSON response from server");
+        console.log("Response is not JSON, but update was successful");
       }
   
       setMessage("Profile updated successfully!");
       
-      // Simpan ke localStorage (dengan pengecekan JSON.parse)
       try {
         const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
         localStorage.setItem("user", JSON.stringify({ ...storedUser, bio, gender, interest }));
@@ -79,7 +76,6 @@ const Settings = () => {
   };
 
   return (
-
     <div className="min-h-screen bg-gray-100 p-6">
       {/* Navbar */}
       <div className="flex justify-between items-center text-xl bg-white p-4 rounded-lg shadow-md">
@@ -88,18 +84,8 @@ const Settings = () => {
           <button className="hover:text-gray-900 transition"><FaSearch /></button>
           <button onClick={() => navigate("/notifications")} className="hover:text-orange-500 transition"><FaBell /></button>
           <button onClick={() => navigate("/mail")} className="hover:text-orange-500 transition"><FaEnvelope /></button>
+          <button className="hover:text-orange-500 transition" onClick={() => navigate("/discovery")}><FaHome /></button>
           <button className="text-yellow-500"><FaCog /></button>
-
-    <div className={`min-h-screen p-6 transition-all`}>
-      {/* Navbar Icons */}
-      <div className="flex justify-between items-center text-xl">
-        <h1 className="text-3xl font-bold">Settings</h1>
-        <div className="flex space-x-4">
-          <button><FaSearch className="cursor-pointer" /></button>
-          <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FaBell className="cursor-pointer" /></button>
-          <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FaEnvelope className="cursor-pointer" /></button>
-          <button className="text-xl p-2 hover:text-orange-500" onClick={() => navigate("/discovery")} aria-label="Home"><FaHome /></button>
-          <button><FaCog className="cursor-pointer text-yellow-500" /></button>
         </div>
       </div>
 
