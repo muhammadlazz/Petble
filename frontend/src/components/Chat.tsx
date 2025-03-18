@@ -24,8 +24,8 @@ const conversations: Record<number, Message[]> = {
 
 const conversationNames: Record<number, string> = {
   1: "Firdaus",
-  2: "Najwa",
-  3: "Firdaus",
+  2: "Jua",
+  3: "Sarah",
 };
 
 const Chat = () => {
