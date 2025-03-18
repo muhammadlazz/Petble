@@ -13,7 +13,7 @@ import Mail from "./components/Mail";
 import Settings from "./components/Settings";
 import Chat from "./components/Chat";
 import Register from "./components/Register";
-import ChatBot from "./components/chatbot";
+import ChatBot from "./components/ChatBot";
 import Premium from "./components/Premium";
 
 const App: React.FC = () => {
@@ -62,7 +62,6 @@ const App: React.FC = () => {
               <NavLink to="/about" className="hover:text-gray-300">About Us</NavLink>
               <NavLink to="/signin" className="hover:text-gray-300">Sign In</NavLink>
               <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink>
-              <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink> {/* Tambahkan ini */}
             </nav>
 
             {/* Toggle Mode */}
