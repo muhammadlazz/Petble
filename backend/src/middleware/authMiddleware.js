@@ -1,16 +1,36 @@
+// middleware/authMiddleware.js - Middleware untuk verifikasi token JWT
 import jwt from "jsonwebtoken";
+import User from "../models/user.js";
 
-const authMiddleware = (req, res, next) => {
-  const token = req.header("Authorization")?.split(" ")[1];
-
-  if (!token) return res.status(401).json({ message: "Access denied, no token provided" });
-
+const authMiddleware = async (req, res, next) => {
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
+    // Ambil token dari header
+    const authHeader = req.header("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "Tidak ada token, akses ditolak" });
+    }
+
+    const token = authHeader.replace("Bearer ", "");
+
+    try {
+      // Verifikasi token
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      // Cari user berdasarkan ID dalam token
+      const user = await User.findById(decoded.id).select("-password");
+      if (!user) {
+        return res.status(401).json({ message: "Token valid tetapi user tidak ditemukan" });
+      }
+      
+      // Tambahkan informasi user ke req object
+      req.user = { id: user._id };
+      next();
+    } catch (err) {
+      return res.status(401).json({ message: "Token tidak valid" });
+    }
   } catch (error) {
-    res.status(400).json({ message: "Invalid token" });
+    console.error(error);
+    res.status(500).json({ message: "Kesalahan server pada middleware auth" });
   }
 };
 
