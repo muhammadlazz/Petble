@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { FaBell, FaEnvelope, FaCog, FaSearch, FaSignOutAlt } from "react-icons/fa";
+import { FaBell, FaEnvelope, FaCog, FaSearch, FaHome, FaSignOutAlt } from "react-icons/fa";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -24,6 +24,7 @@ const Settings = () => {
           <button><FaSearch className="cursor-pointer" /></button>
           <button onClick={() => navigate("/notifications")} className="hover:text-orange-500"><FaBell className="cursor-pointer" /></button>
           <button onClick={() => navigate("/mail")} className="hover:text-orange-500"><FaEnvelope className="cursor-pointer" /></button>
+          <button className="text-xl p-2 hover:text-orange-500" onClick={() => navigate("/discovery")} aria-label="Home"><FaHome /></button>
           <button><FaCog className="cursor-pointer text-yellow-500" /></button>
         </div>
       </div>
