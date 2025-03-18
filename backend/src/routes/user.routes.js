@@ -1,4 +1,4 @@
-// user.routes.js - Untuk pengelolaan profil dan pertemanan
+//Untuk pengelolaan profil dan pertemanan
 import express from "express";
 import User from "../models/user.js";
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -58,24 +58,35 @@ userRouter.get("/", authMiddleware, async (req, res) => {
  *       404:
  *         description: User not found
  */
-// PUT: Update profil user (Protected)
+
+// Update profil user (Protected)
+// Update profil user (Protected)
+// Update profil user (Protected)
 userRouter.put("/update-profile", authMiddleware, async (req, res) => {
   try {
     const { bio, gender, interest } = req.body;
-    const userId = req.user.id; // Dapatkan user ID dari middleware
+    const userId = req.user?.id; // Ambil user ID dari token
 
-    // Cek apakah user ada
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized: req.user tidak ditemukan" });
+    }
+
+    // Cari user berdasarkan ID
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: "User tidak ditemukan" });
+    if (!user) {
+      return res.status(404).json({ message: "User tidak ditemukan" });
+    }
 
-    // Update data user
-    user.bio = bio;
-    user.gender = gender;
-    user.interest = interest;
-    await user.save();
+    // Update hanya jika ada perubahan (tidak wajib kirim semua field)
+    if (bio !== undefined) user.bio = bio;
+    if (gender !== undefined) user.gender = gender;
+    if (interest !== undefined) user.interest = interest;
 
-    res.json({ message: "Profil berhasil diperbarui", user });
+    await user.save(); // Simpan perubahan
+
+    res.json({ message: "Profile updated successfully", user });
   } catch (error) {
+    console.error("❌ Error updating profile:", error);
     res.status(500).json({ message: "Kesalahan server", error: error.message });
   }
 });
@@ -109,7 +120,8 @@ userRouter.put("/update-profile", authMiddleware, async (req, res) => {
  *       404:
  *         description: User or friend not found
  */
-// POST: Tambah teman
+
+// Tambah teman
 userRouter.post("/add-friend", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id; // Gunakan ID dari token

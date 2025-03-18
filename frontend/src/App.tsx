@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
-import { FiMoon, FiSun, FiInstagram, FiYoutube, FiTwitter, FiFacebook } from "react-icons/fi";
-import { getBackendMessage } from "./api";
+import { FiInstagram, FiYoutube, FiTwitter, FiFacebook } from "react-icons/fi";
 import "./index.css";
 import "./App.css";
 import Home from "./components/Home";
@@ -17,57 +16,33 @@ import ChatBot from "./components/ChatBot";
 import Premium from "./components/Premium";
 
 const App: React.FC = () => {
-  const [activeMenu, setActiveMenu] = useState<boolean>(false);
-  const [theme, setTheme] = useState<string>(localStorage.getItem("theme") || "light");
-  const [, setMessage] = useState<string>("");
-
-  useEffect(() => {
-    if (theme === "dark") {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    getBackendMessage().then((data) => {
-      if (data) setMessage(data);
-    });
-  }, []);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const toggleMenu = (): void => {
-    setActiveMenu(!activeMenu);
-  };
-
-  const toggleTheme = (): void => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setMenuOpen(!menuOpen);
   };
 
   return (
     <Router>
-      <div className="flex flex-col min-h-screen text-gray-900 dark:text-white" style={{ backgroundColor: "#ABD1C6" }}>
+      <div className="flex flex-col min-h-screen bg-gray-100 text-gray-900">
         
         {/* HEADER */}
-        <header className="bg-green-900 text-white py-4">
-          <div className="container mx-auto flex justify-between items-center px-4">
-            <NavLink to="/" className="text-3xl font-bold">Petble</NavLink>
+        <header className="bg-green-700 text-white shadow-lg">
+          <div className="container mx-auto flex justify-between items-center p-4">
+            <NavLink to="/" className="text-2xl font-bold tracking-wide">Petble</NavLink>
 
-            <button onClick={toggleMenu} className="md:hidden text-2xl" aria-label="Toggle Menu">
-              ☰
+            {/* Mobile Menu Button */}
+            <button onClick={toggleMenu} className="md:hidden text-2xl focus:outline-none">
+              {menuOpen ? "✖" : "☰"}
             </button>
 
-            <nav className={`${activeMenu ? "block" : "hidden"} md:flex gap-6`}>
-              <NavLink to="/" className="hover:text-gray-300">Home</NavLink>
-              <NavLink to="/about" className="hover:text-gray-300">About Us</NavLink>
-              <NavLink to="/signin" className="hover:text-gray-300">Sign In</NavLink>
-              <NavLink to="/premium" className="hover:text-gray-300">Go Premium</NavLink>
+            {/* Navigation */}
+            <nav className={`absolute md:static top-16 left-0 w-full md:w-auto bg-green-700 md:bg-transparent transition-all duration-300 ease-in-out ${menuOpen ? "block" : "hidden"} md:flex md:items-center gap-6`}>
+              <NavLink to="/" className="block md:inline-block px-4 py-2 hover:bg-green-600 rounded-md">Home</NavLink>
+              <NavLink to="/about" className="block md:inline-block px-4 py-2 hover:bg-green-600 rounded-md">About Us</NavLink>
+              <NavLink to="/signin" className="block md:inline-block px-4 py-2 hover:bg-green-600 rounded-md">Sign In</NavLink>
+              <NavLink to="/premium" className="block md:inline-block px-4 py-2 hover:bg-green-600 rounded-md">Go Premium</NavLink>
             </nav>
-
-            {/* Toggle Mode */}
-            <button onClick={toggleTheme} className="ml-4 text-2xl" aria-label="Toggle Theme">
-              {theme === "light" ? <FiMoon /> : <FiSun />}
-            </button>
           </div>
         </header>
 
@@ -85,28 +60,23 @@ const App: React.FC = () => {
             <Route path="/register" element={<Register />} />
             <Route path="/chatbot" element={<ChatBot />} />
             <Route path="/premium" element={<Premium />} />
-            <Route path="/premium" element={<Premium />} /> {/* Rute Premium */}
           </Routes>
         </main>
 
         {/* FOOTER */}
-        <footer className="bg-green-900 text-white py-6 mt-8">
+        <footer className="bg-green-700 text-white py-6 mt-8">
           <div className="container mx-auto text-center">
             <h3 className="text-lg font-semibold">Petble</h3>
-            <p className="text-gray-300">
-              Platform yang mendukung pemilik hewan peliharaan dalam merawat hewan kesayangan.
-            </p>
+            <p className="text-gray-300">Platform yang mendukung pemilik hewan peliharaan dalam merawat hewan kesayangan.</p>
 
             <div className="flex justify-center gap-4 mt-3 text-xl">
-              <FiInstagram />
-              <FiYoutube />
-              <FiTwitter />
-              <FiFacebook />
+              <FiInstagram className="hover:text-gray-300 cursor-pointer" />
+              <FiYoutube className="hover:text-gray-300 cursor-pointer" />
+              <FiTwitter className="hover:text-gray-300 cursor-pointer" />
+              <FiFacebook className="hover:text-gray-300 cursor-pointer" />
             </div>
 
-            <p className="mt-4 text-gray-400 text-sm">
-              &copy; {new Date().getFullYear()} Petble. All rights reserved.
-            </p>
+            <p className="mt-4 text-gray-400 text-sm">&copy; {new Date().getFullYear()} Petble. All rights reserved.</p>
           </div>
         </footer>
       </div>

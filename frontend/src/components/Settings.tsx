@@ -32,13 +32,24 @@ const Settings = () => {
   
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found. Please log in again.");
+      }
+  
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  
       const response = await fetch("http://localhost:5000/api/users/update-profile", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ bio, gender, interest }),
+        body: JSON.stringify({
+          username: storedUser.username || storedUser.email.split("@")[0], // ⬅️ Kirim username juga
+          bio,
+          gender,
+          interest
+        }),
       });
   
       if (!response.ok) {
@@ -46,27 +57,16 @@ const Settings = () => {
         throw new Error(errorText || "Failed to update profile");
       }
   
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        await response.json(); // Process the JSON response if needed
-      } else {
-        console.log("Response is not JSON, but update was successful");
-      }
+      const updatedUser = await response.json();
+      localStorage.setItem("user", JSON.stringify(updatedUser)); // ⬅️ Update local storage
   
       setMessage("Profile updated successfully!");
-      
-      try {
-        const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-        localStorage.setItem("user", JSON.stringify({ ...storedUser, bio, gender, interest }));
-      } catch (error) {
-        console.error("Error updating localStorage:", error);
-      }
     } catch (error: any) {
       setMessage(error.message);
     } finally {
       setLoading(false);
     }
-  };  
+  };    
 
   const handleLogout = () => {
     localStorage.removeItem("token");

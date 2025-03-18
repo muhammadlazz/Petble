@@ -1,4 +1,4 @@
-// middleware/authMiddleware.js - Middleware untuk verifikasi token JWT
+// Middleware untuk verifikasi token JWT
 import jwt from "jsonwebtoken";
 import User from "../models/user.js";
 
