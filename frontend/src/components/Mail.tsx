@@ -17,14 +17,9 @@ type Conversation = {
 const conversations: Conversation[] = [
 
 
-  // { id: 1, name: "Firdaus", lastMessage: "Hai, apa kabar", avatar: "/images/avatar-placeholder.jpg" },
-  // { id: 2, name: "Najwa", lastMessage: "ᗪOᗰIՏIᒪI ᗰᗩᑎᗩ", avatar: "/images/avatar-placeholder.jpg" },
-  // { id: 3, name: "Firdaus", lastMessage: "aku punya 5 gecko", avatar: "/images/avatar-placeholder.jpg" },
-  // { id: 4, name: "Firdaus", lastMessage: "salah", avatar: "/images/avatar-placeholder.jpg" },
-  // { id: 5, name: "Firdaus", lastMessage: "salah", avatar: "/images/avatar-placeholder.jpg" },
-  { id: 1, name: "Firdaus", lastMessage: "Hai! Apa kabar?", avatar: prof3 },
-  { id: 2, name: "Jua", lastMessage: "ᒍᗩᑌᕼ ᗩKᑌ ᒍᗩTIᗰ", avatar: prof1 },
-  { id: 3, name: "Sarah", lastMessage: "Wah, keren!", avatar: prof2 },
+  // { id: 1, name: "Firdaus", lastMessage: "Hai! Apa kabar?", avatar: prof3 },
+  // { id: 2, name: "Jua", lastMessage: "ᒍᗩᑌᕼ ᗩKᑌ ᒍᗩTIᗰ", avatar: prof1 },
+  // { id: 3, name: "Sarah", lastMessage: "Wah, keren!", avatar: prof2 },
   { id: 1, name: "Firdaus", lastMessage: "ayo kita ketemuan", avatar: prof3 },
   { id: 2, name: "Jua", lastMessage: "ᗪOᗰIՏIᒪI ᗰᗩᑎᗩ", avatar: prof1 },
   { id: 3, name: "Sarah", lastMessage: "aku punya 5 gecko", avatar: prof2 },

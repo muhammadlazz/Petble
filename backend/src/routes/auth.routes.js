@@ -1,4 +1,3 @@
-// auth.routes.js - Untuk pengelolaan autentikasi
 import express from "express";
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
@@ -107,6 +106,56 @@ authRouter.post("/login", async (req, res) => {
     res.json({ token, user: { id: user._id, username: user.username, email: user.email } });
   } catch (error) {
     res.status(500).json({ message: "Kesalahan Server", error: error.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/auth/add-friend:
+ *   post:
+ *     summary: Add a new friend for a premium user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               friendName:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Friend added successfully
+ *       403:
+ *         description: Only premium users can add friends
+ *       500:
+ *         description: Failed to add friend
+ */
+// POST: Add friend
+authRouter.post("/add-friend", authMiddleware, async (req, res) => {
+  try {
+    const { friendName } = req.body;
+    const userId = req.user.id; // Didapat dari middleware authMiddleware
+
+    if (!friendName || friendName.trim() === "") {
+      return res.status(400).json({ message: "Nama teman tidak boleh kosong" });
+    }
+
+    // Ambil user dari database
+    const user = await User.findById(userId);
+
+    if (!user.isPremium) {
+      return res.status(403).json({ message: "Hanya pengguna Premium yang dapat menambahkan teman" });
+    }
+
+    // Tambahkan teman ke daftar teman user
+    user.friends.push(friendName);
+    await user.save();
+
+    res.status(200).json({ message: "Teman berhasil ditambahkan", friends: user.friends });
+  } catch (error) {
+    res.status(500).json({ message: "Gagal menambahkan teman", error: error.message });
   }
 });
 

@@ -1,4 +1,3 @@
-// models/user.js - Skema model user
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
@@ -43,6 +42,32 @@ const userSchema = new mongoose.Schema({
     default: Date.now
   }
 });
+
+userSchema.methods.addFriend = async function (friendId) {
+
+  if (this.friends.includes(friendId)) {
+    throw new Error("User sudah menjadi teman");
+  }
+  
+  this.friends.push(friendId);
+  await this.save(); 
+  return this;
+};
+
+userSchema.methods.isUserPremium = function () {
+  return this.isPremium;
+};
+
+userSchema.statics.upgradeToPremium = async function (userId) {
+  const user = await this.findById(userId); 
+  if (!user) {
+    throw new Error("User tidak ditemukan");
+  }
+  
+  user.isPremium = true;
+  await user.save();
+  return user;
+};
 
 const User = mongoose.model("User", userSchema);
 

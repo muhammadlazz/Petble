@@ -1,4 +1,3 @@
-//Untuk pengelolaan profil dan pertemanan
 import express from "express";
 import User from "../models/user.js";
 import authMiddleware from "../middleware/authMiddleware.js";
@@ -58,10 +57,7 @@ userRouter.get("/", authMiddleware, async (req, res) => {
  *       404:
  *         description: User not found
  */
-
-// Update profil user (Protected)
-// Update profil user (Protected)
-// Update profil user (Protected)
+// PUT: Update profil user (Protected)
 userRouter.put("/update-profile", authMiddleware, async (req, res) => {
   try {
     const { bio, gender, interest } = req.body;
@@ -77,7 +73,7 @@ userRouter.put("/update-profile", authMiddleware, async (req, res) => {
       return res.status(404).json({ message: "User tidak ditemukan" });
     }
 
-    // Update hanya jika ada perubahan (tidak wajib kirim semua field)
+    // Update hanya jika ada perubahan
     if (bio !== undefined) user.bio = bio;
     if (gender !== undefined) user.gender = gender;
     if (interest !== undefined) user.interest = interest;
@@ -106,8 +102,6 @@ userRouter.put("/update-profile", authMiddleware, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               userId:
- *                 type: string
  *               friendId:
  *                 type: string
  *     responses:
@@ -120,45 +114,47 @@ userRouter.put("/update-profile", authMiddleware, async (req, res) => {
  *       404:
  *         description: User or friend not found
  */
-
-// Tambah teman
 userRouter.post("/add-friend", authMiddleware, async (req, res) => {
   try {
-    const userId = req.user.id; // Gunakan ID dari token
+    console.log("Request diterima:", req.body); // Debug data request
+
+    const userId = req.user.id; // ID user dari token
     const { friendId } = req.body;
-    
-    // Cari user yang sedang login
+
+    if (!friendId) {
+      return res.status(400).json({ message: "Friend ID is required" });
+    }
+
+    console.log(`User ID: ${userId}, Friend ID: ${friendId}`);
+
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User tidak ditemukan" });
+      return res.status(404).json({ message: "User not found" });
     }
     
-    // Periksa apakah user adalah premium
+    const friend = await User.findById(friendId);
+    if (!friend) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+
+    if (user.friends.includes(friendId)) {
+      return res.status(400).json({ message: "Already friends" });
+    }
+
     if (!user.isPremium && user.friends.length >= 5) {
       return res
         .status(403)
-        .json({ message: "Pengguna gratis hanya dapat memiliki maksimal 5 teman" });
+        .json({ message: "Free users can only have up to 5 friends" });
     }
-    
-    // Cari user yang ingin ditambahkan sebagai teman
-    const friend = await User.findById(friendId);
-    if (!friend) {
-      return res.status(404).json({ message: "Teman tidak ditemukan" });
-    }
-    
-    // Cek apakah sudah berteman
-    if (user.friends.includes(friendId)) {
-      return res.status(400).json({ message: "Sudah berteman" });
-    }
-    
-    // Tambahkan friend ke list friends
+
     user.friends.push(friendId);
     await user.save();
-    
-    return res.status(200).json({ message: "Teman berhasil ditambahkan" });
+
+    console.log("Teman berhasil ditambahkan:", friendId);
+    return res.status(200).json({ message: "Friend added successfully", friendId });
   } catch (error) {
-    console.error("Error menambahkan teman:", error);
-    return res.status(500).json({ message: "Kesalahan server", error: error.message });
+    console.error("Error:", error.message);
+    return res.status(500).json({ message: "Server error", error: error.message });
   }
 });
 
