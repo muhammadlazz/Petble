@@ -10,8 +10,6 @@ const Premium: React.FC = () => {
   });
   const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
   const [showCancelModal, setShowCancelModal] = useState<boolean>(false);
-  const [friends, setFriends] = useState<string[]>([]);
-  const [friendName, setFriendName] = useState<string>("");
 
   const handleUpgrade = () => {
     setShowPaymentModal(true);
@@ -33,14 +31,6 @@ const Premium: React.FC = () => {
     setShowCancelModal(false);
   };
 
-  const handleAddFriend = () => {
-    if (friendName.trim() === "") {
-      alert("Friend name cannot be empty!");
-      return;
-    }
-    setFriends((prevFriends) => [...prevFriends, friendName]);
-    setFriendName(""); // Reset input
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 text-black">
@@ -106,39 +96,6 @@ const Premium: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center py-10 bg-gray-200">
-        <h2 className="text-2xl font-bold text-teal-800 mb-4">Add Friends</h2>
-        <div className="flex gap-4">
-          <input
-            type="text"
-            placeholder="Enter friend's name"
-            value={friendName}
-            onChange={(e) => setFriendName(e.target.value)}
-            className="border border-gray-300 p-2 rounded-lg"
-          />
-          <button
-            onClick={handleAddFriend}
-            className="bg-teal-500 text-white px-6 py-2 rounded-lg hover:bg-teal-600 transition"
-          >
-            Add Friend
-          </button>
-        </div>
-        {/* Daftar Teman */}
-        <div className="mt-6">
-          <h3 className="text-xl font-semibold text-gray-700">Friend List:</h3>
-          {friends.length > 0 ? (
-            <ul className="mt-4 list-disc list-inside text-left">
-              {friends.map((friend, index) => (
-                <li key={index} className="text-lg text-gray-800">
-                  {friend}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-600 mt-4">No friends added yet.</p>
-          )}
-        </div>
-      </div>
 
       {showPaymentModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
