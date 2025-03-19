@@ -86,7 +86,7 @@ userRouter.put("/update-profile", authMiddleware, async (req, res) => {
 
     res.json({ message: "Profile updated successfully", user });
   } catch (error) {
-    console.error("❌ Error updating profile:", error);
+    console.error(" Error updating profile:", error);
     res.status(500).json({ message: "Kesalahan server", error: error.message });
   }
 });
@@ -126,38 +126,47 @@ userRouter.post("/add-friend", authMiddleware, async (req, res) => {
   try {
     const userId = req.user.id; // Gunakan ID dari token
     const { friendId } = req.body;
-    
-    // Cari user yang sedang login
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User tidak ditemukan" });
+
+    if (!friendId) {
+      return res.status(400).json({ message: "friendId harus disertakan" });
     }
-    
-    // Periksa apakah user adalah premium
+
+    if (userId === friendId) {
+      return res.status(400).json({ message: "Kamu tidak bisa menambahkan diri sendiri sebagai teman" });
+    }
+
+    // Cari user dan teman dalam satu query
+    const [user, friend] = await Promise.all([
+      User.findById(userId).lean(),
+      User.findById(friendId).lean(),
+    ]);
+
+    if (!user || !friend) {
+      return res.status(404).json({ message: "User atau teman tidak ditemukan" });
+    }
+
+    // Periksa batas teman untuk pengguna gratis
     if (!user.isPremium && user.friends.length >= 5) {
-      return res
-        .status(403)
-        .json({ message: "Pengguna gratis hanya dapat memiliki maksimal 5 teman" });
+      return res.status(403).json({ message: "Pengguna gratis hanya dapat memiliki maksimal 5 teman" });
     }
-    
-    // Cari user yang ingin ditambahkan sebagai teman
-    const friend = await User.findById(friendId);
-    if (!friend) {
-      return res.status(404).json({ message: "Teman tidak ditemukan" });
-    }
-    
-    // Cek apakah sudah berteman
+
+    // Periksa apakah sudah berteman
     if (user.friends.includes(friendId)) {
       return res.status(400).json({ message: "Sudah berteman" });
     }
-    
-    // Tambahkan friend ke list friends
-    user.friends.push(friendId);
-    await user.save();
-    
-    return res.status(200).json({ message: "Teman berhasil ditambahkan" });
+
+    // Tambahkan pertemanan secara dua arah (mutual friends)
+    await Promise.all([
+      User.findByIdAndUpdate(userId, { $push: { friends: friendId } }),
+      User.findByIdAndUpdate(friendId, { $push: { friends: userId } }),
+    ]);
+
+    // Ambil daftar teman terbaru
+    const updatedUser = await User.findById(userId).populate("friends", "username bio gender interest");
+
+    return res.status(200).json({ message: "Teman berhasil ditambahkan", friends: updatedUser.friends });
   } catch (error) {
-    console.error("Error menambahkan teman:", error);
+    console.error(" Error menambahkan teman:", error);
     return res.status(500).json({ message: "Kesalahan server", error: error.message });
   }
 });

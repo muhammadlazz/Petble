@@ -26,11 +26,14 @@ const SignIn: React.FC = () => {
         throw new Error(data.message || "Login failed");
       }
 
-      // ✅ Simpan token dan user ke localStorage
+      // Simpan token dan user ke localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("userId", data.user.id); // Simpan userId secara eksplisit
+      localStorage.setItem("token", data.token);
 
-      // ✅ Paksa trigger event storage agar komponen lain terupdate
+
+      // Paksa trigger event storage agar komponen lain terupdate
       window.dispatchEvent(new Event("storage"));
 
       console.log("Login Successful:", data);

@@ -70,6 +70,8 @@ const Discovery: React.FC = () => {
   };
 
   useEffect(() => {
+    const userId = localStorage.getItem("userId");
+    console.log("Checking userId on mount:", userId);
     updateUsername(); // Panggil pertama kali saat komponen dimount
 
     // Event listener untuk mendeteksi perubahan localStorage
@@ -86,16 +88,39 @@ const Discovery: React.FC = () => {
 
   const handleAddFriend = async (friendId: string) => {
     try {
-      const response = await axios.post("/api/add-friend", {
-        userId: localStorage.getItem("userId"), // Ambil userId dari localStorage
-        friendId,
-      });
-      alert(response.data.message); // Tampilkan pesan sukses
-    } catch (error) {
-      alert("Failed to add friend. Please try again.");
-      console.error(error);
+      const userId = localStorage.getItem("userId");
+      const token = localStorage.getItem("token");
+  
+      if (!userId) {
+        console.error("Error: User ID not found in localStorage.");
+        alert("Error: User ID not found. Please log in again.");
+        return;
+      }
+  
+      if (!token) {
+        console.error("Error: No token found.");
+        alert("Error: Unauthorized. Please log in again.");
+        return;
+      }
+  
+      console.log("Sending request with:", { userId, friendId });
+  
+      const response = await axios.post(
+        "/api/users/add-friend",
+        { userId, friendId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+  
+      alert(response.data.message);
+    } catch (error: any) {
+      console.error("Error adding friend:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Failed to add friend. Please try again.");
     }
-  };
+  };    
 
   const users = [
     { id: "1", name: "Lazuardi", age: 21, image: LazuardiImage, interests: ["Reptile lovers", "Cat Lovers"], isPremium: true },
